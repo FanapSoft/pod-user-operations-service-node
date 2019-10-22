@@ -5,27 +5,29 @@ const expect = require('chai').expect;
 const PodUserOperationsService = require('../lib/main');
 
 // Variable Initialization
-let podUserOperations = new PodUserOperationsService();
-let accessToken = 'ACCESS TOKEN'; // ACCESS TOKEN
+let podUserOperations = new PodUserOperationsService({});
+
+let accessToken = 'token'; // ACCESS TOKEN | API TOKEN
 let clientId = 'CLIENT ID'; // CLIENT ID
 let clientSecret = 'CLIENT SECRET'; // CLIENT SECRET
 
-describe.only('API: getUserProfile ', function () {
+// #1
+describe('API: getUserProfile ', function () {
   this.timeout(10000);
-  let correct = { _token_: accessToken };
-  let additional = { _token_: accessToken, additional: 'additional' };
-  let wrongToken = { _token_: 'Invalid token' };
+  let correct = { token: accessToken };
+  let additional = { token: accessToken, additional: 'additional' };
+  let wrongToken = { token: 'Invalid token' };
 
   it('correct request', function (done) {
     podUserOperations.getUserProfile(correct)
       .then(function (result) {
-        // console.log(result);
+        console.log(JSON.stringify(result, null, 2));
         expect(result).to.have.property('hasError', false);
         expect(result).to.have.property('result');
         done();
       })
-      .catch(function () {
-        // console.log(error);
+      .catch(function (error) {
+        console.log(error);
         done(new Error());
       });
   });
@@ -33,11 +35,11 @@ describe.only('API: getUserProfile ', function () {
   it('incorrect request (validation error)', function (done) {
     podUserOperations.getUserProfile(additional)
       .then(function (result) {
-        // console.log('========================>', result);
+        console.log(JSON.stringify(result, null, 2));
         done(new Error());
       })
       .catch(function (error) {
-        // console.log('=============================>', error);
+        console.log(JSON.stringify(error, null, 2));
         expect(error).to.have.property('code', 887);
         done();
       });
@@ -46,22 +48,23 @@ describe.only('API: getUserProfile ', function () {
   it('incorrect request (invalid access token)', function (done) {
     podUserOperations.getUserProfile(wrongToken)
       .then(function (result) {
-        // console.log('========================>', result);
+        console.log(JSON.stringify(result, null, 2));
         done(new Error());
       })
       .catch(function (error) {
-        // console.log('=============================>', error);
+        console.log(JSON.stringify(error, null, 2));
         expect(error).to.have.property('code', 21);
         done();
       });
   });
 });
 
+// #2
 describe('API: editProfileWithConfirmation ', function () {
   this.timeout(10000);
-  let minimal = { _token_: accessToken, nickName: 'NICKNAME' };
+  let minimal = { token: accessToken, firstName: 'Ehsan', nickName: 'EshanSH' };
   let all = {
-    _token_: accessToken,
+    token: accessToken,
     nickName: 'NICKNAME',
     firstName: 'Ehsan',
     lastName: 'Shekari',
@@ -83,62 +86,103 @@ describe('API: editProfileWithConfirmation ', function () {
     client_metadata: { name: 'NAME' },
     birthState: '1366/04/20',
     identificationNumber: '13028',
-    fatherName: 'Mohammadamin'
+    fatherName: 'Mohammadamin',
+    scVoucherHash: ['HASH#1']
   };
-  let additional = { _token_: accessToken, additional: 'FIRSTNAME' };
-  let wrongToken = { _token_: 'Invalid token', nickName: 'NICKNAME' };
+  let additional = { token: accessToken, additional: 'FIRSTNAME' };
+  let wrongToken = { token: 'Invalid token', nickName: 'NICKNAME' };
 
   it('correct request minimal params', function (done) {
     podUserOperations.editProfileWithConfirmation(minimal)
       .then(function (result) {
-        // console.log(result);
+        console.log(JSON.stringify(result, null, 2));
         expect(result).to.have.property('hasError', false);
         expect(result).to.have.property('result');
         done();
       })
-      .catch(function () {
-        // console.log(error);
+      .catch(function (error) {
+        console.log(JSON.stringify(error, null, 2));
         done(new Error());
       });
   });
 
-  it('correct request all params', function (done) {
+  xit('correct request all params', function (done) {
     podUserOperations.editProfileWithConfirmation(all)
       .then(function (result) {
-        // console.log(result);
+        console.log(JSON.stringify(result, null, 2));
         expect(result).to.have.property('hasError', false);
         expect(result).to.have.property('result');
         done();
       })
-      .catch(function () {
-        // console.log(error);
+      .catch(function (error) {
+        console.log(JSON.stringify(error, null, 2));
         done(new Error());
       });
   });
 
-  it('incorrect request (validation error)', function (done) {
+  xit('incorrect request (validation error)', function (done) {
     podUserOperations.editProfileWithConfirmation(additional)
       .then(function (result) {
-        // console.log('========================>', result);
+        console.log(JSON.stringify(result, null, 2));
         done(new Error());
       })
       .catch(function (error) {
-        // console.log('=============================>', error);
+        console.log(JSON.stringify(error, null, 2));
         expect(error).to.have.property('code', 887);
         done();
       });
   });
 
-  it('incorrect request (invalid access token)', function (done) {
+  xit('incorrect request (invalid access token)', function (done) {
     podUserOperations.editProfileWithConfirmation(wrongToken)
       .then(function (result) {
-        // console.log('========================>', result);
+        console.log(JSON.stringify(result, null, 2));
         done(new Error());
       })
       .catch(function (error) {
-        // console.log('=============================>', error);
+        console.log(JSON.stringify(error, null, 2));
         expect(error).to.have.property('code', 21);
         done();
+      });
+  });
+});
+
+// #3
+describe('API: getListAddress ', function () {
+  this.timeout(10000);
+  let correct = { token: accessToken, offset: 0 };
+
+  it('correct request', function (done) {
+    podUserOperations.getListAddress(correct)
+      .then(function (result) {
+        console.log(JSON.stringify(result, null, 2));
+        expect(result).to.have.property('hasError', false);
+        expect(result).to.have.property('result');
+        done();
+      })
+      .catch(function (error) {
+        console.log(error);
+        done(new Error());
+      });
+  });
+});
+
+// #4
+describe('API: confirmEditProfile ', function () {
+  this.timeout(10000);
+  let correct = { token: accessToken, code: '4009232', cellphoneNumber: '09153864790' };
+
+  it('correct request', function (done) {
+    podUserOperations.confirmEditProfile(correct)
+      .then(function (result) {
+        console.log(JSON.stringify(result, null, 2));
+        expect(result).to.have.property('hasError', false);
+        expect(result).to.have.property('result');
+        done();
+      })
+      .catch(function (error) {
+        console.log(error);
+        done(new Error());
       });
   });
 });
